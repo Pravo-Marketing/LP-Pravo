@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="scroll-smooth dark" lang="pt-br">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pravo - Iniciando Atendimento</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        async function sendToWhatsapp(event) {
+            event.preventDefault();
+            const form = event.target;
+            const nome = form.nome.value;
+            const sobrenome = form.sobrenome.value;
+            const empresa = form.empresa.value;
+            const email = form.email.value;
+            const telefone = form.telefone.value;
+            const faturamento = form.faturamento.value;
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            // Disable button and show loading state
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Enviando...';
+
+            const data = {
+                nome,
+                sobrenome,
+                empresa,
+                email,
+                telefone,
+                faturamento,
+                data_hora: new Date().toISOString()
+            };
+
+            // Send to n8n Webhook
+            try {
+                // Using no-cors mode since we just want to fire and forget for the user experience if CORS is an issue,
+                // but ideally we want to know it succeeded. 
+                // However, n8n webhooks usually support CORS if configured. 
+                // We'll try a simple POST. If it fails, we still redirect.
+                await fetch('https://n8n-n8n.cmkkpz.easypanel.host/webhook/lead-pravo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+            } catch (error) {
+                console.error('Erro ao salvar dados:', error);
+                // Continue to WhatsApp even if tracking fails
+            }
+
+            const message = "Olá, acabei de preencher o formulário no site e aguardo o contato.";
+
+            const encodedMessage = encodeURIComponent(message);
+            const phoneNumber = "5511932534072"; // Pravo WhatsApp Number
+            const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+            window.location.href = url;
+
+            // Restore button state (in case redirect is cancelled or slow)
+            setTimeout(() => {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }, 3000);
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-dark text-gray-100 antialiased selection:bg-primary selection:text-white min-h-screen flex flex-col">
+    <!-- Navbar (Simplified) -->
+    <nav class="w-full z-50 transition-all duration-300 bg-background-dark/80 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-center items-center h-20">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <img src="logo.png" alt="Logo Pravo" class="h-10 w-auto">
+                    <span class="font-display font-bold text-xl tracking-tight text-white uppercase">Pravo</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div
+            class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none">
+        </div>
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-10">
+        </div>
+
+        <div class="max-w-md w-full space-y-8 relative z-10">
+            <div class="text-center">
+                <span
+                    class="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-6">
+                    <span class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-xs font-semibold tracking-wide uppercase text-gray-400">Atendimento Inicial</span>
+                </span>
+                <h2 class="text-3xl font-display font-bold text-white mb-2">Vamos iniciar seu atendimento</h2>
+                <p class="text-gray-400 text-sm leading-relaxed max-w-sm mx-auto">
+                    Para que possamos entender melhor o seu perfil e oferecer a solução ideal, preencha os dados abaixo.
+                </p>
+                <div
+                    class="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg flex items-center gap-3 text-left">
+                    <span class="material-symbols-outlined text-blue-400 text-xl shrink-0">lock</span>
+                    <p class="text-xs text-blue-200">Seus dados estão 100% seguros conosco. Utilizamos essas informações
+                        apenas para qualificar seu atendimento.</p>
+                </div>
+            </div>
+
+            <form onsubmit="sendToWhatsapp(event)"
+                class="glass-panel p-8 rounded-2xl space-y-6 border border-white/10 shadow-2xl">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="nome" class="block text-sm font-medium text-gray-300 mb-1">Nome</label>
+                        <input type="text" id="nome" name="nome" required
+                            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                            placeholder="Seu nome">
+                    </div>
+                    <div>
+                        <label for="sobrenome" class="block text-sm font-medium text-gray-300 mb-1">Sobrenome</label>
+                        <input type="text" id="sobrenome" name="sobrenome" required
+                            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                            placeholder="Seu sobrenome">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1">E-mail Corporativo</label>
+                    <input type="email" id="email" name="email" required
+                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                        placeholder="seu@email.com.br">
+                </div>
+
+                <div>
+                    <label for="empresa" class="block text-sm font-medium text-gray-300 mb-1">Nome da Empresa</label>
+                    <input type="text" id="empresa" name="empresa" required
+                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                        placeholder="Sua empresa">
+                </div>
+
+                <div>
+                    <label for="telefone" class="block text-sm font-medium text-gray-300 mb-1">Telefone
+                        (WhatsApp)</label>
+                    <input type="tel" id="telefone" name="telefone" required
+                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                        placeholder="(DDD) 99999-9999">
+                </div>
+
+                <div>
+                    <label for="faturamento" class="block text-sm font-medium text-gray-300 mb-1">Faturamento Mensal da
+                        Empresa</label>
+                    <select id="faturamento" name="faturamento" required
+                        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none appearance-none cursor-pointer">
+                        <option value="" disabled selected class="bg-surface-dark text-gray-500">Selecione uma opção
+                        </option>
+                        <option value="Até R$ 50k" class="bg-surface-dark">Até R$ 50.000</option>
+                        <option value="R$ 50k - R$ 100k" class="bg-surface-dark">R$ 50.000 - R$ 100.000</option>
+                        <option value="R$ 100k - R$ 300k" class="bg-surface-dark">R$ 100.000 - R$ 300.000</option>
+                        <option value="R$ 300k - R$ 500k" class="bg-surface-dark">R$ 300.000 - R$ 500.000</option>
+                        <option value="Acima de R$ 500k" class="bg-surface-dark">Acima de R$ 500.000</option>
+                    </select>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit"
+                        class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-primary/20 transition-all transform hover:scale-[1.02] flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined">send</span>
+                        Enviar Mensagem
+                    </button>
+                    <div class="mt-4 text-center">
+                        <a href="https://wa.me/5511932534072?text=Ol%C3%A1%2C%20queria%20tirar%20d%C3%BAvidas%20mas%20prefiro%20n%C3%A3o%20preencher%20o%20formul%C3%A1rio%20agora."
+                            class="text-xs text-gray-500 hover:text-white transition-colors underline decoration-gray-600 hover:decoration-white underline-offset-4">
+                            Prefiro não preencher agora e falar direto (pode demorar um pouco mais)
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="py-6 border-t border-white/5 text-center text-gray-600 text-xs text-center w-full">
+        <p>© 2026 Pravo. Todos os direitos reservados.</p>
+    </footer>
+</body>
+
+</html>
