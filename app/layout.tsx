@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://pravo-performance.juanmillan-ads.chatgpt.site'),
+  metadataBase: new URL('https://pravo.com.br'),
   title: 'Pravo — Gestão de Meta Ads orientada por dados',
   description: 'Gestão estratégica de Meta Ads para gerar leads e vendas. Aquisição, estrutura digital e performance orientada por dados no Brasil e na América Latina.',
   openGraph: {
