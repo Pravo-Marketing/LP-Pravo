@@ -1,0 +1,25 @@
+PRAVO — ARQUIVOS PRONTOS PARA PUBLICAÇÃO
+=========================================
+
+Versão responsiva: hero e painel de dados ajustados para celular.
+
+IMPORTANTE: não envie o arquivo ZIP fechado para o GitHub.
+Primeiro extraia o ZIP e envie todo o conteúdo extraído para a raiz do repositório.
+
+Os itens index.html, site-config.js, favicon.svg, og.png e a pasta assets
+devem ficar juntos na raiz.
+
+GITHUB PAGES
+1. Envie os arquivos extraídos para a branch main.
+2. No repositório, acesse Settings > Pages.
+3. Em Source, escolha Deploy from a branch.
+4. Selecione main e a pasta / (root), depois salve.
+
+CONFIGURAÇÃO
+Edite site-config.js para inserir o link de agendamento e o ID do Meta Pixel.
+O WhatsApp já está configurado.
+
+SEGURANÇA
+O ID do Meta Pixel pode ser público.
+Nunca coloque o token da API de Conversões no site-config.js ou em qualquer
+arquivo deste pacote. Esse token precisa ficar em um servidor seguro.
